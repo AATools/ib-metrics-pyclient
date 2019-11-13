@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/AATools/ib-metrics-pyclient.svg?branch=master)](https://travis-ci.com/AATools/ib-metrics-pyclient) [![Coverage Status](https://coveralls.io/repos/github/AATools/ib-metrics-pyclient/badge.svg?branch=master)](https://coveralls.io/github/AATools/ib-metrics-pyclient?branch=master)
 
-This is python client for collecting IBM Integration Bus metrics and exporting to [Prometheus pushgateway](https://github.com/prometheus/pushgateway). 
+This is python client for collecting IBM Integration Bus metrics and exporting to [Prometheus pushgateway](https://github.com/prometheus/pushgateway).
 The collected metrics can be explored in Prometheus or Grafana.
 
 The metrics are collected using [mqsilist](https://www.ibm.com/support/knowledgecenter/en/SSMKHH_9.0.0/com.ibm.etools.mft.doc/an07250_.htm) command. So, you need to install `IBM Integration Bus`.
@@ -14,6 +14,7 @@ Tested for IBM IB v9 and Python 2.6 and 2.7 on Linux.
 By default, metrics are collected every 15 seconds.
 
 The metrics provided by the client:
+
 * `ib_broker_status...` - current status of IB brokers;
 * `ib_exec_group_status...` - current status of IB execution groups;
 * `ib_application_status...` - current status of IB applications;
@@ -53,4 +54,4 @@ The Grafana dashboard visualizes collected metrics.
 
 ## Simple process scheme
 
-![](../images/ib_metrics_pyclient_scheme.jpg?raw=true)
+![ib_metrics_pyclient_scheme](../images/ib_metrics_pyclient_scheme.jpg?raw=true)
