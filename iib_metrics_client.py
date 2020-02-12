@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 import requests
 from log.logger_client import set_logger
@@ -14,7 +13,7 @@ from modules.iib_api import run_iib_command
 logger = set_logger()
 
 STATUS_MAP = {
-    'running.': 1,
+    'running.': 1, 
     'stopped.': 0
     }
 
@@ -62,7 +61,7 @@ def get_broker_items(broker_row_data):
     exec_groups = []
     applications = []
     message_flows = []
-    # See IBM diagnostic messages:
+    # See IBM diagnostic messages: 
     # https://www.ibm.com/support/knowledgecenter/en/SSMKHH_9.0.0/com.ibm.etools.mft.bipmsgs.doc/ay_bip1.htm
     # Also you can use command: mqsiexplain <bip_code>
     bip_codes = {

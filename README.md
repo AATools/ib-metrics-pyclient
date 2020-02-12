@@ -7,11 +7,11 @@ The collected metrics can be explored in Prometheus or Grafana.
 
 The metrics are collected using [mqsilist](https://www.ibm.com/support/knowledgecenter/en/SSMKHH_9.0.0/com.ibm.etools.mft.doc/an07250_.htm) command. So, you need to install `IBM Integration Bus`.
 
-Tested for IBM IB v9 and Python 2.6 and 2.7 on Linux.
+Tested for IBM IB v9 and Python 2.6, 2.7, 3.6 on Linux.
 
 ## Collected metrics
 
-By default, metrics are collected every 15 seconds.
+By default, metrics are collected every 60 seconds.
 
 The metrics provided by the client:
 
@@ -43,8 +43,7 @@ For Pushgateway the default port is used (":9091").
 ```bash
 git clone https://github.com/AATools/ib-metrics-pyclient
 cd ib-metrics-pyclient
-chmod u+x ./iib_metrics_client.py
-nohup ./iib_metrics_client.py &
+nohup python3 iib_metrics_client.py &
 ```
 
 After that, you should set up your Prometheus server to collect metrics from Pushgateway (`http://<hostname>:9091/metrics`).
