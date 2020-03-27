@@ -29,7 +29,7 @@ def put_metric_to_gateway(metric_data, job):
     headers = {"Content-Type": "text/plain; version=0.0.4"}
     dest_url = "{0}/metrics/job/{1}".format(src_url, job)
     logger.info("Destination url: {0}".format(dest_url))
-    logger.info("Metric data to push: {0}".format(metric_data))
+    # logger.info("Metric data to push: {0}".format(metric_data))
     try:
         response = requests.put(dest_url, data=metric_data, headers=headers)
         if not response.ok:
