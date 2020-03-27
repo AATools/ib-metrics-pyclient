@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os
+import subprocess
 
 
 def run_iib_command(**kwargs):
@@ -17,5 +17,10 @@ def run_iib_command(**kwargs):
         command = iib_command.format(broker)
     else:
         command = iib_command
-    output = os.popen(command).read()
+    proc = subprocess.Popen(command,
+                            shell=True,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT,
+                            universal_newlines=True)
+    output = proc.communicate()[0]
     return output
