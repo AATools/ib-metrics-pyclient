@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
+"""Various functions for client api."""
 import subprocess
 
 
 def run_iib_command(**kwargs):
+    """Calls predefined commands and returns their result."""
     command_mapping = {
         'get_brokers_status': 'mqsilist | grep Broker',
         'get_broker_objects': 'mqsilist {0} -r',
     }
-    broker = ''
+    broker = str()
     for arg_name, arg_value in kwargs.items():
         if arg_name == 'task':
             iib_command = command_mapping[arg_value]
@@ -24,3 +26,11 @@ def run_iib_command(**kwargs):
                             universal_newlines=True)
     output = proc.communicate()[0]
     return output
+
+
+def get_status(status):
+    """Returns a numeric status value."""
+    status_map = {
+        'running.': 1,
+        'stopped.': 0}
+    return status_map[status]
