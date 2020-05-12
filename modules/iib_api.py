@@ -19,13 +19,19 @@ def run_iib_command(**kwargs):
         command = iib_command.format(broker)
     else:
         command = iib_command
+    output = execute_command(command=command)
+    return output
+
+
+def execute_command(command):
+    """Executes in shell."""
     proc = subprocess.Popen(command,
                             shell=True,
                             stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT,
                             universal_newlines=True)
-    output = proc.communicate()[0]
-    return output
+    result = proc.communicate()[0]
+    return result
 
 
 def get_status(status):
