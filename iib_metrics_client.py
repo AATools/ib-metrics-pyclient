@@ -79,8 +79,8 @@ def main():
                 put_metric_to_gateway(metric_data=metric_data, job=broker_name)
                 logger.info("All metrics pushed successfully!")
             else:
+                put_metric_to_gateway(metric_data=broker_data, job=broker_name)
                 logger.warning("The status of broker is {0}\nOther metrics will not be collected!".format(status))
-                put_metric_to_gateway(metric_data=metric_data, job=broker_name)
         logger.info("Script finished in - {0} seconds -".format(time.time() - start_time))
     except PrometheusBadResponse as error:
         logger.error(error)
