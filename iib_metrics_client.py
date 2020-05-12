@@ -40,6 +40,7 @@ def put_metric_to_gateway(metric_data, job):
     headers = {"Content-Type": "text/plain; version=0.0.4"}
     dest_url = "{0}/metrics/job/{1}".format(src_url, job)
     logger.info("Destination url: {0}".format(dest_url))
+    # Debug info
     # logger.info("Metric data to push: {0}".format(metric_data))
     try:
         response = requests.put(dest_url, data=metric_data, headers=headers)
@@ -79,14 +80,14 @@ def main():
                 logger.info("All metrics pushed successfully!")
             else:
                 logger.warning("The status of broker is {0}\nOther metrics will not be collected!".format(status))
-                put_metric_to_gateway(broker_data, broker_name)
+                put_metric_to_gateway(metric_data=metric_data, job=broker_name)
+        logger.info("Script finished in - {0} seconds -".format(time.time() - start_time))
     except PrometheusBadResponse as error:
         logger.error(error)
     except Exception as e:
         tb = sys.exc_info()[-1]
         stk = traceback.extract_tb(tb, 1)[0]
         logger.error("Function: {0}\n{1}".format(stk, e))
-    logger.info("Script finished in - {0} seconds -".format(time.time() - start_time))
 
 
 if __name__ == "__main__":
