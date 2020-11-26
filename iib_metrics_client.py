@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """Python client for collecting IBM Integration Bus metrics and exporting to Prometheus pushgateway."""
 import sys
+import os
 import time
 import traceback
 import platform
 import requests
+import argparse
 from requests import ConnectionError
 from urllib3.exceptions import ResponseError
 from modules.iib_brokers import (
@@ -28,15 +30,39 @@ class PrometheusBadResponse(Exception):
 def static_content():
     """Client name and version."""
     name = "ib-metrics-pyclient"
-    version = "0.2"
+    version = "0.3"
     return '{0} v.{1}'.format(name, version)
 
 
-def put_metric_to_gateway(metric_data, job):
+def get_version_from_env():
+    """Get Integration Bus version from env variable."""
+    iib_version = os.getenv("MQSI_VERSION_V")
+    if iib_version:
+        logger.info("Integration Bus version is defined via MQSI_VERSION_V environment variable.")
+    else:
+        logger.info("Integration Bus default version is used.")
+        iib_version == "9"
+    return iib_version
+
+
+def parse_commandline_args():
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser(prog='iib_metrics_client.py')
+    parser.add_argument('--pghost', metavar='pushgatewayHost', nargs='?', default=platform.node(), dest='pushgateway_host', help='pushgateway host')
+    parser.add_argument('--pgport', metavar='pushgatewayPort', nargs='?', default='9091', dest='pushgateway_port', help='pushgateway port')
+    parser.add_argument('--iibver', metavar='iibVersion', nargs='?', default=None, dest='iib_cmd_ver', help='IIB version: 9 or 10')
+    args = parser.parse_args()
+    if (args.iib_cmd_ver is None) or ((args.iib_cmd_ver != '9') and (args.iib_cmd_ver != '10')):
+        logger.info("Trying to determine ntegration Bus version from environment variable MQSI_VERSION_V.")
+        iib_cmd_ver = get_version_from_env()
+    else:
+        iib_cmd_ver = args.iib_cmd_ver
+    return args.pushgateway_host, args.pushgateway_port, iib_cmd_ver
+
+
+def put_metric_to_gateway(metric_data, job, pushgateway_host, pushgateway_port):
     """Sends data to Prometheus pushgateway."""
-    hostname = platform.node()
-    port = 9091
-    src_url = "http://{0}:{1}".format(hostname, port)
+    src_url = "http://{0}:{1}".format(pushgateway_host, pushgateway_port)
     headers = {"Content-Type": "text/plain; version=0.0.4"}
     dest_url = "{0}/metrics/job/{1}".format(src_url, job)
     logger.info("Destination url: {0}".format(dest_url))
@@ -51,7 +77,7 @@ def put_metric_to_gateway(metric_data, job):
         raise PrometheusBadResponse("{0} is not available!".format(dest_url))
 
 
-def main():
+def get_iib_metrics(pushgateway_host, pushgateway_port, iib_ver):
     start_time = time.time()
     logger.info("Starting metrics collecting for Integration Bus!")
     try:
@@ -76,10 +102,18 @@ def main():
                     exec_groups_data,
                     applications_data,
                     message_flows_data)
-                put_metric_to_gateway(metric_data=metric_data, job=broker_name)
+                put_metric_to_gateway(
+                    metric_data=metric_data,
+                    job=broker_name,
+                    pushgateway_host=pushgateway_host,
+                    pushgateway_port=pushgateway_port)
                 logger.info("All metrics pushed successfully!")
             else:
-                put_metric_to_gateway(metric_data=broker_data, job=broker_name)
+                put_metric_to_gateway(
+                    metric_data=metric_data,
+                    job=broker_name,
+                    pushgateway_host=pushgateway_host,
+                    pushgateway_port=pushgateway_port)
                 logger.warning("The status of broker is {0}\nOther metrics will not be collected!".format(status))
         logger.info("Script finished in - {0} seconds -".format(time.time() - start_time))
     except PrometheusBadResponse as error:
@@ -92,6 +126,11 @@ def main():
 
 if __name__ == "__main__":
     logger.info("Run {0}".format(static_content()))
+    pushgateway_host, pushgateway_port, iib_ver = parse_commandline_args()
+    logger.info("Integration Bus version: {0}".format(iib_ver))
     while True:
-        main()
+        get_iib_metrics(
+            pushgateway_host=pushgateway_host,
+            pushgateway_port=pushgateway_port,
+            iib_ver=iib_ver)
         time.sleep(60)
