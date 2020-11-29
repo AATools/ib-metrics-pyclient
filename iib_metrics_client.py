@@ -41,7 +41,7 @@ def get_version_from_env():
         logger.info("Integration Bus version is defined via MQSI_VERSION_V environment variable.")
     else:
         logger.info("Integration Bus default version is used.")
-        iib_version == "9"
+        iib_version = "9"
     return iib_version
 
 

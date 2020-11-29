@@ -3,6 +3,7 @@
 import os
 import sys
 import unittest
+import argparse
 try:
     from unittest.mock import patch
 except ImportError:
@@ -11,6 +12,8 @@ from iib_metrics_client import (
     get_iib_metrics,
     put_metric_to_gateway,
     static_content,
+    get_version_from_env,
+    parse_commandline_args,
     PrometheusBadResponse)
 sys.path.append(os.getcwd())
 
@@ -128,6 +131,67 @@ class TestStaticContent(unittest.TestCase):
     def test_static_content(self):
         """Test for `static_content` function."""
         self.assertIsInstance(static_content(), str)
+
+
+class TestGetVersionFromEnv(unittest.TestCase):
+    Mocked = MockFunction()
+    @patch.dict(os.environ, {"MQSI_VERSION_V": "10"})
+    @patch('iib_metrics_client.logger.info', side_effect=Mocked.mock_logging_info)
+    def test_get_version_from_env_exist(self, mock_logging_info):
+        """Test for `get_version_from_env` function for exist `MQSI_VERSION_V` variable."""
+        self.assertEqual(get_version_from_env(), "10")
+
+    @patch('iib_metrics_client.logger.info', side_effect=Mocked.mock_logging_info)
+    def test_get_version_from_env_not_exist(self, mock_logging_info):
+        """Test for `get_version_from_env` function for not exist `MQSI_VERSION_V` variable."""
+        self.assertEqual(get_version_from_env(), "9")
+
+
+class TestParseCommandlineArgs(unittest.TestCase):
+    pushgateway_host = 'testhost'
+    pushgateway_port = '9091'
+    iib_ver = '9'
+
+    Mocked = MockFunction()
+    @patch('iib_metrics_client.logger.info', side_effect=Mocked.mock_logging_info)
+    @patch(
+        'argparse.ArgumentParser.parse_args',
+        return_value=argparse.Namespace(
+            pushgateway_host= pushgateway_host,
+            pushgateway_port= pushgateway_port,
+            iib_cmd_ver= iib_ver))
+    def test_parse_commandline_args(self, mock_logging_info, mock_args):
+        """Test for `parse_commandline_args` function."""
+        self.assertEqual(
+            parse_commandline_args(), 
+            (self.pushgateway_host, self.pushgateway_port, self.iib_ver))
+
+    @patch('iib_metrics_client.logger.info', side_effect=Mocked.mock_logging_info)
+    @patch(
+        'argparse.ArgumentParser.parse_args', 
+        return_value=argparse.Namespace(
+            pushgateway_host= pushgateway_host,
+            pushgateway_port= pushgateway_port,
+            iib_cmd_ver=None))
+    def test_parse_commandline_args_is_none(self, mock_logging_info, mock_args):
+        """Test for `parse_commandline_args` function for `iib_cmd_ver` is None."""
+        self.assertEqual(
+            parse_commandline_args(),
+            (self.pushgateway_host, self.pushgateway_port, self.iib_ver))
+
+    @patch('iib_metrics_client.logger.info', side_effect=Mocked.mock_logging_info)
+    @patch(
+        'argparse.ArgumentParser.parse_args', 
+        return_value=argparse.Namespace(
+            pushgateway_host= pushgateway_host,
+            pushgateway_port= pushgateway_port,
+            iib_cmd_ver='42'))
+    def test_parse_commandline_args_is_42(self, mock_logging_info, mock_args):
+        """Test for `parse_commandline_args` function for `iib_cmd_ver` is None."""
+        self.assertEqual(
+            parse_commandline_args(),
+            (self.pushgateway_host, self.pushgateway_port, self.iib_ver))
+
 
 
 if __name__ == '__main__':
