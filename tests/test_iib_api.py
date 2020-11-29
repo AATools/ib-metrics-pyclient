@@ -33,5 +33,5 @@ class TestRunMqCommand(unittest.TestCase):
 class TestGetStatus(unittest.TestCase):
     def test_get_status(self):
         """Test for `get_status` function."""
-        self.assertEqual(0, get_status(status='stopped.'))
-        self.assertEqual(1, get_status(status='running.'))
+        self.assertEqual(0, get_status(status='stopped'))
+        self.assertEqual(1, get_status(status='running'))

@@ -22,7 +22,7 @@ def format_message_flows(message_flows, broker_name):
     msg_flow_metric_data = str()
     for msg_flow in message_flows:
         msg_flow_list = msg_flow.split()
-        egname, app_name, message_flow_name, status = msg_flow_list[7], msg_flow_list[11], msg_flow_list[3], msg_flow_list[9]
+        egname, app_name, message_flow_name, status = msg_flow_list[7], msg_flow_list[11], msg_flow_list[3], msg_flow_list[9].replace(".", "")
         template_string = 'egname="{0}", brokername="{1}", appname="{2}", messageflowname="{3}"'.format(
             egname.replace("'", ""),
             broker_name,

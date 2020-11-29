@@ -13,7 +13,7 @@ class TestGetBrokersStatus(unittest.TestCase):
     def test_get_brokers_status(self):
         """Test for `get_brokers_status` function."""
         input_data = "BIP1284I: Broker 'TEST' on queue manager 'TEST' is running.\n"
-        check_data = [['TEST', 'running.', 'TEST']]
+        check_data = [['TEST', 'running', 'TEST']]
         self.assertEqual(check_data, get_brokers_status(brokers_data=input_data))
 
 
@@ -56,7 +56,7 @@ ib_broker_status{{brokername="{0}", qmname="{1}"}} {2}\n\
             check_data,
             format_broker(
                 broker_name=self.input_data_broker,
-                status='running.',
+                status='running',
                 qm_name=self.input_data_qmname))
 
     def test_format_broker_bad_status(self):

@@ -22,7 +22,7 @@ def format_exec_groups(exec_groups):
     eg_metric_data = str()
     for eg in exec_groups:
         eg_list = eg.split()
-        broker_name, egname, status = eg_list[6], eg_list[3], eg_list[8]
+        broker_name, egname, status = eg_list[6], eg_list[3], eg_list[8].replace(".", "")
         template_string = 'brokername="{0}", egname="{1}"'.format(
             broker_name.replace("'", ""),
             egname.replace("'", ""))

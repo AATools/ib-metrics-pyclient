@@ -89,7 +89,7 @@ def get_iib_metrics(pushgateway_host, pushgateway_port, iib_ver):
                 broker_name=broker_name,
                 status=status,
                 qm_name=qm_name)
-            if status == 'running.':
+            if status == 'running':
                 broker_row_data = run_iib_command(
                     task='get_broker_objects',
                     broker_name=broker_name)

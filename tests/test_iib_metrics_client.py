@@ -51,14 +51,14 @@ class TestGetIIBMetrics(unittest.TestCase):
             mock_put_metric_to_gateway):
         """Tests for `get_iib_metrics` function."""
         with patch('iib_metrics_client.get_brokers_status') as mock_get_brokers_status:
-            mock_get_brokers_status.return_value = [['TEST', 'running.', 'TEST']]
+            mock_get_brokers_status.return_value = [['TEST', 'running', 'TEST']]
             self.assertEqual(
                 get_iib_metrics(
                     pushgateway_host=self.pushgateway_host,
                     pushgateway_port=self.pushgateway_port,
                     iib_ver=self.iib_ver),
                 None)
-            mock_get_brokers_status.return_value = [['TEST', 'stopped.', 'TEST']]
+            mock_get_brokers_status.return_value = [['TEST', 'stopped', 'TEST']]
             self.assertEqual(
                 get_iib_metrics(
                     pushgateway_host=self.pushgateway_host,

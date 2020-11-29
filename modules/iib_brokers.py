@@ -24,7 +24,7 @@ def get_brokers_status(brokers_data):
         record_list = record.split()
         broker_name = record_list[2].replace("'", "")
         qm_name = record_list[6].replace("'", "")
-        status = record_list[8].replace("'", "")
+        status = record_list[8].replace("'", "").replace(".", "")
         brokers.append([broker_name, status, qm_name])
     return brokers
 

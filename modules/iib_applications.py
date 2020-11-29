@@ -22,7 +22,7 @@ def format_applications(applications, broker_name):
     app_metric_data = str()
     for app in applications:
         app_list = app.split()
-        egname, app_name, status = app_list[6], app_list[2], app_list[8]
+        egname, app_name, status = app_list[6], app_list[2], app_list[8].replace(".", "")
         template_string = 'egname="{0}", brokername="{1}", appname="{2}"'.format(
             egname.replace("'", ""),
             broker_name,

@@ -37,6 +37,6 @@ def execute_command(command):
 def get_status(status):
     """Returns a numeric status value."""
     status_map = {
-        'running.': 1,
-        'stopped.': 0}
+        'running': 1,
+        'stopped': 0}
     return status_map[status]
