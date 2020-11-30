@@ -110,7 +110,7 @@ def get_iib_metrics(pushgateway_host, pushgateway_port, iib_ver):
                 logger.info("All metrics pushed successfully!")
             else:
                 put_metric_to_gateway(
-                    metric_data=metric_data,
+                    metric_data=broker_data,
                     job=broker_name,
                     pushgateway_host=pushgateway_host,
                     pushgateway_port=pushgateway_port)
