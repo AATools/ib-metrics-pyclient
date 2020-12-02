@@ -7,7 +7,7 @@ The collected metrics can be explored in Prometheus or Grafana.
 
 The metrics are collected using [mqsilist](https://www.ibm.com/support/knowledgecenter/en/SSMKHH_9.0.0/com.ibm.etools.mft.doc/an07250_.htm) command. So, you need to install `IBM Integration Bus`.
 
-Tested for IBM IB v9 and Python 2.6, 2.7, 3.6 on Linux.
+Tested for IBM IB v9 and v10 and Python 2.7, 3.6 on Linux.
 
 ## Collected metrics
 
@@ -47,6 +47,31 @@ nohup python3 iib_metrics_client.py &
 ```
 
 After that, you should set up your Prometheus server to collect metrics from Pushgateway (`http://<hostname>:9091/metrics`).
+
+You can specify `host` and `port` for pushgateway and Integration Bus version via command-line arguments.
+
+```bash
+python3 iib_metrics_client.py -h
+
+usage: iib_metrics_client.py [-h] [--pghost [pushgatewayHost]] [--pgport [pushgatewayPort]] [--iibver [iibVersion]]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --pghost [pushgatewayHost]
+                        pushgateway host
+  --pgport [pushgatewayPort]
+                        pushgateway port
+  --iibver [iibVersion]
+                        IIB version: 9 or 10
+```
+
+If argument is not set the default value is used.
+
+| Command-line argument | Description | Default value |
+|:---|:---|:---|
+| `pghost` | Pushgateway host | Hostname on which client is started.<br> Value define via `platform.node()`. |
+| `pgport` | Pushgateway port | `9091` |
+| `iibver` | IIB version | `9`<br> Valid value: **9** or **10**.<br> If argument is omitted or invalid value is passed, the client will try to determine version via environment variable `MQSI_VERSION_V`. If it can't determine the version using the environment variable, the default value will be used. |
 
 ## Grafana dashboard
 
