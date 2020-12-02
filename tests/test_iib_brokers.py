@@ -87,7 +87,37 @@ BIP8071I: Successful command completion.\n"'''
                        "BIP1276I: Application 'Adapter2' on execution group 'IB' is stopped."],
                       ["BIP1277I: Message flow 'esb.adapter.RequestForESB' on execution group 'IB' is running. (Application 'Adapter', Library '')",
                        "BIP1278I: Message flow 'esb.adapter.RequestForESB2' on execution group 'IB' is stopped. (Application 'Adapter', Library '')"])
-        self.assertEqual(check_data, get_broker_items(broker_row_data=input_data))
+        bip_codes_components = get_platform_params_for_commands(iib_ver='9')[2]
+        self.assertEqual(
+            check_data,
+            get_broker_items(
+                broker_row_data=input_data,
+                bip_codes=bip_codes_components))
+
+        input_data = '''"-----------------------------------
+BIP1286I: Integration server 'IB' on integration node 'TEST' is running.
+BIP1287I: Integration server 'IB' on integration node 'TEST2' is stopped.
+BIP1275I: Application 'Adapter' on execution group 'IB' is running.
+BIP1276I: Application 'Adapter2' on execution group 'IB' is stopped.
+BIP1277I: Message flow 'esb.adapter.RequestForESB' on execution group 'IB' is running. (Application 'Adapter', Library '')
+BIP1278I: Message flow 'esb.adapter.RequestForESB2' on execution group 'IB' is stopped. (Application 'Adapter', Library '')
+BIP1274I: Library 'Utils' is deployed to execution group 'IB'. (Application 'Adapter')
+BIP1299I: File 'esb.util.subflow' is deployed to execution group 'IB'. (Application 'Adapter', Library 'Utils')
+BIP8071I: Successful command completion.\n"'''
+        check_data = (["BIP1286I: Integration server 'IB' on integration node 'TEST' is running.",
+                       "BIP1287I: Integration server 'IB' on integration node 'TEST2' is stopped."],
+                      ["BIP1275I: Application 'Adapter' on execution group 'IB' is running.",
+                       "BIP1276I: Application 'Adapter2' on execution group 'IB' is stopped."],
+                      ["BIP1277I: Message flow 'esb.adapter.RequestForESB' on execution group 'IB' is running. (Application 'Adapter', Library '')",
+                       "BIP1278I: Message flow 'esb.adapter.RequestForESB2' on execution group 'IB' is stopped. (Application 'Adapter', Library '')"])
+        bip_codes_components = get_platform_params_for_commands(iib_ver='10')[2]
+        self.assertEqual(
+            check_data,
+            get_broker_items(
+                broker_row_data=input_data,
+                bip_codes=bip_codes_components))
+
+        
 
 
 class TestFormatBroker(unittest.TestCase):

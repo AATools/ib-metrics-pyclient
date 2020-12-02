@@ -7,6 +7,7 @@ from modules.iib_message_flows import (
     format_message_flows,
     get_metric_name,
     get_metric_annotation)
+from modules.iib_api import get_platform_params_for_commands
 sys.path.append(os.getcwd())
 
 
@@ -23,21 +24,40 @@ class TestFormatMessageFlows(unittest.TestCase):
 # TYPE ib_message_flow_status gauge
 ib_message_flow_status{egname="TEST", brokername="TEST", appname="TEST", messageflowname="TEST.RUNNING"} 1
 ib_message_flow_status{egname="TEST", brokername="TEST", appname="TEST", messageflowname="TEST.STOPPED"} 0\n'''
+        bip_codes_components = get_platform_params_for_commands(iib_ver='9')[2]
         self.assertEqual(
             check_data,
             format_message_flows(
                 message_flows=input_data_msgflow,
-                broker_name=self.input_data_broker))
+                broker_name=self.input_data_broker,
+                bip_codes=bip_codes_components))
+        bip_codes_components = get_platform_params_for_commands(iib_ver='10')[2]
+        self.assertEqual(
+            check_data,
+            format_message_flows(
+                message_flows=input_data_msgflow,
+                broker_name=self.input_data_broker,
+                bip_codes=bip_codes_components))
 
     def test_format_message_flows_bad_status(self):
         """Test for `format_message_flows` function for bad case."""
         input_data_msgflow = [
             "BIP1111I: Message flow 'TETS.INVALID' on execution group 'TEST' is invalid. (Application 'TEST', Library '')"]
-        self.assertRaises(
-            KeyError,
-            format_message_flows,
-            message_flows=input_data_msgflow,
-            broker_name=self.input_data_broker)
+        check_data = ''
+        bip_codes_components = get_platform_params_for_commands(iib_ver='9')[2]
+        self.assertEqual(
+            check_data,
+            format_message_flows(
+                message_flows=input_data_msgflow,
+                broker_name=self.input_data_broker,
+                bip_codes=bip_codes_components))
+        bip_codes_components = get_platform_params_for_commands(iib_ver='10')[2]
+        self.assertEqual(
+            check_data,
+            format_message_flows(
+                message_flows=input_data_msgflow,
+                broker_name=self.input_data_broker,
+                bip_codes=bip_codes_components))
 
 
 class GetMetricAnnotation(unittest.TestCase):

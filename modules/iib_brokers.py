@@ -36,27 +36,22 @@ def get_brokers_status(brokers_data, bip_codes):
     return brokers
 
 
-def get_broker_items(broker_row_data):
+def get_broker_items(broker_row_data, bip_codes):
     """Returns lists with data for broker items: execution groups, applications, message flows."""
     output_list = broker_row_data.split('\n')
     exec_groups = list()
     applications = list()
     message_flows = list()
-    # See IBM diagnostic messages:
-    # https://www.ibm.com/support/knowledgecenter/en/SSMKHH_9.0.0/com.ibm.etools.mft.bipmsgs.doc/ay_bip1.htm
-    # Also you can use command: mqsiexplain <bip_code>
-    bip_codes = {
-     'BIP1286I': exec_groups,
-     'BIP1287I': exec_groups,
-     'BIP1275I': applications,
-     'BIP1276I': applications,
-     'BIP1277I': message_flows,
-     'BIP1278I': message_flows}
     for record in output_list:
         if record:
             bip_code = record.split()[0].replace(':', '')
             if bip_code in bip_codes.keys():
-                bip_codes[bip_code].append(record)
+                if  bip_codes[bip_code][0] == 'exec_groups':
+                    exec_groups.append(record)
+                if  bip_codes[bip_code][0] == 'applications':
+                    applications.append(record)
+                if  bip_codes[bip_code][0] == 'message_flows':
+                    message_flows.append(record)
     return exec_groups, applications, message_flows
 
 

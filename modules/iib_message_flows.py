@@ -16,24 +16,30 @@ def get_metric_annotation():
     return annotations
 
 
-def format_message_flows(message_flows, broker_name):
+def format_message_flows(message_flows, broker_name, bip_codes):
     """Returns string with all metrics for all message flows which ready to push to pushgateway."""
     metrics_annotation = get_metric_annotation()
     msg_flow_metric_data = str()
     for msg_flow in message_flows:
         msg_flow_list = msg_flow.split()
-        egname, app_name, message_flow_name, status = msg_flow_list[7], msg_flow_list[11], msg_flow_list[3], msg_flow_list[9].replace(".", "")
-        template_string = 'egname="{0}", brokername="{1}", appname="{2}", messageflowname="{3}"'.format(
-            egname.replace("'", ""),
-            broker_name,
-            app_name.replace("'", "").replace(",", ""),
-            message_flow_name.replace("'", ""))
-        msg_flow_metric = '{0}{{{1}}} {2}\n'.format(
-            get_metric_name(metric_label='status'),
-            template_string,
-            get_status(status=status))
-        msg_flow_metric_data += msg_flow_metric
-    msg_flow_metric_data = '{0}{1}'.format(
-        metrics_annotation['status'],
-        msg_flow_metric_data)
+        bip_code = msg_flow_list[0].replace(':', '')
+        if bip_code in bip_codes.keys():
+            egname = msg_flow_list[bip_codes[bip_code][1]]
+            app_name = msg_flow_list[bip_codes[bip_code][2]]
+            message_flow_name = msg_flow_list[bip_codes[bip_code][3]]
+            status = msg_flow_list[bip_codes[bip_code][4]].replace(".", "")
+            template_string = 'egname="{0}", brokername="{1}", appname="{2}", messageflowname="{3}"'.format(
+                egname.replace("'", ""),
+                broker_name,
+                app_name.replace("'", "").replace(",", ""),
+                message_flow_name.replace("'", ""))
+            msg_flow_metric = '{0}{{{1}}} {2}\n'.format(
+                get_metric_name(metric_label='status'),
+                template_string,
+                get_status(status=status))
+            msg_flow_metric_data += msg_flow_metric
+    if msg_flow_metric_data:
+        msg_flow_metric_data = '{0}{1}'.format(
+            metrics_annotation['status'],
+            msg_flow_metric_data)
     return msg_flow_metric_data

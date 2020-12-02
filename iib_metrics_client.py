@@ -79,7 +79,7 @@ def put_metric_to_gateway(metric_data, job, pushgateway_host, pushgateway_port):
         raise PrometheusBadResponse("{0} is not available!".format(dest_url))
 
 
-def get_iib_metrics(pushgateway_host, pushgateway_port, mqsilist_command, bip_codes_brokers):
+def get_iib_metrics(pushgateway_host, pushgateway_port, mqsilist_command, bip_codes_brokers, bip_codes_components):
     start_time = time.time()
     logger.info("Starting metrics collecting for Integration Bus!")
     try:
@@ -95,10 +95,20 @@ def get_iib_metrics(pushgateway_host, pushgateway_port, mqsilist_command, bip_co
                 broker_row_data = run_iib_command(
                     task='get_broker_objects',
                     broker_name=broker_name)
-                exec_groups, applications, message_flows = get_broker_items(broker_row_data=broker_row_data)
-                exec_groups_data = format_exec_groups(exec_groups=exec_groups)
-                applications_data = format_applications(applications=applications, broker_name=broker_name)
-                message_flows_data = format_message_flows(message_flows=message_flows, broker_name=broker_name)
+                exec_groups, applications, message_flows = get_broker_items(
+                    broker_row_data=broker_row_data,
+                    bip_codes=bip_codes_components)
+                exec_groups_data = format_exec_groups(
+                    exec_groups=exec_groups,
+                    bip_codes=bip_codes_components)
+                applications_data = format_applications(
+                    applications=applications,
+                    broker_name=broker_name,
+                    bip_codes=bip_codes_components)
+                message_flows_data = format_message_flows(
+                    message_flows=message_flows,
+                    broker_name=broker_name,
+                    bip_codes=bip_codes_components)
                 metric_data = "{0}{1}{2}{3}".format(
                     broker_data,
                     exec_groups_data,
@@ -130,11 +140,12 @@ if __name__ == "__main__":
     logger.info("Run {0}".format(static_content()))
     pushgateway_host, pushgateway_port, iib_ver = parse_commandline_args()
     logger.info("Integration Bus version: {0}".format(iib_ver))
-    mqsilist_command, bip_codes_brokers = get_platform_params_for_commands (iib_ver=iib_ver)
+    mqsilist_command, bip_codes_brokers, bip_codes_components = get_platform_params_for_commands(iib_ver=iib_ver)
     while True:
         get_iib_metrics(
             pushgateway_host=pushgateway_host,
             pushgateway_port=pushgateway_port,
             mqsilist_command=mqsilist_command,
-            bip_codes_brokers=bip_codes_brokers)
+            bip_codes_brokers=bip_codes_brokers,
+            bip_codes_components=bip_codes_components)
         time.sleep(60)

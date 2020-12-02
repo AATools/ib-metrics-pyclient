@@ -15,6 +15,7 @@ from iib_metrics_client import (
     get_version_from_env,
     parse_commandline_args,
     PrometheusBadResponse)
+from modules.iib_api import get_platform_params_for_commands
 sys.path.append(os.getcwd())
 
 
@@ -52,13 +53,15 @@ class TestGetIIBMetrics(unittest.TestCase):
             mock_put_metric_to_gateway):
         """Tests for `get_iib_metrics` function."""
         with patch('iib_metrics_client.get_brokers_status') as mock_get_brokers_status:
+            bip_codes_components = get_platform_params_for_commands(iib_ver='9')[2]
             mock_get_brokers_status.return_value = [['TEST', 'running', 'TEST']]
             self.assertEqual(
                 get_iib_metrics(
                     pushgateway_host=self.pushgateway_host,
                     pushgateway_port=self.pushgateway_port,
                     mqsilist_command=self.mqsilist_command,
-                    bip_codes_brokers=self.bip_codes_brokers),
+                    bip_codes_brokers=self.bip_codes_brokers,
+                    bip_codes_components= bip_codes_components),
                 None)
             mock_get_brokers_status.return_value = [['TEST', 'stopped', 'TEST']]
             self.assertEqual(
@@ -66,7 +69,8 @@ class TestGetIIBMetrics(unittest.TestCase):
                     pushgateway_host=self.pushgateway_host,
                     pushgateway_port=self.pushgateway_port,
                     mqsilist_command=self.mqsilist_command,
-                    bip_codes_brokers=self.bip_codes_brokers),
+                    bip_codes_brokers=self.bip_codes_brokers,
+                    bip_codes_components= bip_codes_components),
                 None)
 
     @patch('iib_metrics_client.logger.info', side_effect=Mocked.mock_logging_info)

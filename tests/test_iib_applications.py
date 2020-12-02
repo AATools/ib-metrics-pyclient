@@ -7,6 +7,7 @@ from modules.iib_applications import (
     format_applications,
     get_metric_name,
     get_metric_annotation)
+from modules.iib_api import get_platform_params_for_commands
 sys.path.append(os.getcwd())
 
 
@@ -23,20 +24,39 @@ class TestFormatApplications(unittest.TestCase):
 # TYPE ib_application_status gauge
 ib_application_status{egname="TEST", brokername="TEST", appname="TEST.RUNNING"} 1
 ib_application_status{egname="TEST", brokername="TEST", appname="TEST.STOPPED"} 0\n'''
+        bip_codes_components = get_platform_params_for_commands(iib_ver='9')[2]
         self.assertEqual(
             check_data,
             format_applications(
                 applications=input_data_app,
-                broker_name=self.input_data_broker))
+                broker_name=self.input_data_broker,
+                bip_codes=bip_codes_components))
+        bip_codes_components = get_platform_params_for_commands(iib_ver='10')[2]
+        self.assertEqual(
+            check_data,
+            format_applications(
+                applications=input_data_app,
+                broker_name=self.input_data_broker,
+                bip_codes=bip_codes_components))
 
     def test_format_applications_bad_status(self):
         """Test for `format_applications` function for bad case."""
         input_data_app = ["BIP1111I: Execution group 'TEST.INVALID' on execution group 'TEST' is invalid."]
-        self.assertRaises(
-            KeyError,
-            format_applications,
-            applications=input_data_app,
-            broker_name=self.input_data_broker)
+        check_data = ''
+        bip_codes_components = get_platform_params_for_commands(iib_ver='9')[2]
+        self.assertEqual(
+            check_data,
+            format_applications(
+                applications=input_data_app,
+                broker_name=self.input_data_broker,
+                bip_codes=bip_codes_components))
+        bip_codes_components = get_platform_params_for_commands(iib_ver='10')[2]
+        self.assertEqual(
+            check_data,
+            format_applications(
+                applications=input_data_app,
+                broker_name=self.input_data_broker,
+                bip_codes=bip_codes_components))
 
 
 class GetMetricAnnotation(unittest.TestCase):

@@ -44,9 +44,11 @@ class TestGetStatus(unittest.TestCase):
 class TestGetPlatformParamsForCommands(unittest.TestCase):
     def test_get_platform_params_for_commands(self):
         """Test for `get_platform_params_for_commands` dunction."""
-        command, bip_codes = get_platform_params_for_commands(iib_ver='9')
+        command, bip_codes_brokers, bip_codes_components = get_platform_params_for_commands(iib_ver='9')
         self.assertEqual("get_brokers_status", command)
-        self.assertEqual(8, len(bip_codes))
-        command, bip_codes = get_platform_params_for_commands(iib_ver='10')
+        self.assertEqual(8, len(bip_codes_brokers))
+        self.assertEqual(6, len(bip_codes_components))
+        command, bip_codes_brokers, bip_codes_components = get_platform_params_for_commands(iib_ver='10')
         self.assertEqual("get_integration_nodes_status", command)
-        self.assertEqual(12, len(bip_codes))
+        self.assertEqual(12, len(bip_codes_brokers))
+        self.assertEqual(6, len(bip_codes_components))

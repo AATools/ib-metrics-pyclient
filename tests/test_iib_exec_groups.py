@@ -7,6 +7,7 @@ from modules.iib_exec_groups import (
     format_exec_groups,
     get_metric_name,
     get_metric_annotation)
+from modules.iib_api import get_platform_params_for_commands
 sys.path.append(os.getcwd())
 
 
@@ -21,17 +22,38 @@ class TestFormatExecGroups(unittest.TestCase):
 # TYPE ib_exec_group_status gauge
 ib_exec_group_status{brokername="TEST", egname="TEST.RUNNING"} 1
 ib_exec_group_status{brokername="TEST", egname="TEST.STOPPED"} 0\n'''
+        bip_codes_components = get_platform_params_for_commands(iib_ver='9')[2]
         self.assertEqual(
             check_data,
-            format_exec_groups(exec_groups=input_data_eg))
+            format_exec_groups(
+                exec_groups=input_data_eg,
+                bip_codes=bip_codes_components))
+        bip_codes_components = get_platform_params_for_commands(iib_ver='10')[2]
+        input_data_eg = ["BIP1286I: Integration server 'TEST.RUNNING' on integration node 'TEST' is running.",
+                         "BIP1287I: Integration server 'TEST.STOPPED' on integration node 'TEST' is stopped."]
+        self.assertEqual(
+            check_data,
+            format_exec_groups(
+                exec_groups=input_data_eg,
+                bip_codes=bip_codes_components))
 
     def test_format_exec_group_bad_status(self):
         """Test for `format_exec_groups` function for good case."""
+        check_data = ''
         input_data_eg = ["BIP1111I: Execution group 'TEST.INVALID' on broker 'TEST' is invalid."]
-        self.assertRaises(
-            KeyError,
-            format_exec_groups,
-            exec_groups=input_data_eg)
+        bip_codes_components = get_platform_params_for_commands(iib_ver='9')[2]
+        self.assertEqual(
+            check_data,
+            format_exec_groups(
+                exec_groups=input_data_eg,
+                bip_codes=bip_codes_components))
+        input_data_eg = ["BIP1111I: Integration server 'TEST.INVALID' on integration node 'TEST' is invalid."]
+        bip_codes_components = get_platform_params_for_commands(iib_ver='10')[2]
+        self.assertEqual(
+            check_data,
+            format_exec_groups(
+                exec_groups=input_data_eg,
+                bip_codes=bip_codes_components))
 
 
 class GetMetricAnnotation(unittest.TestCase):
