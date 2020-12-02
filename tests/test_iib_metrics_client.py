@@ -41,6 +41,7 @@ class TestGetIIBMetrics(unittest.TestCase):
     pushgateway_port = '9091'
     mqsilist_command = str()
     bip_codes_brokers = dict()
+    bip_codes_components = dict()
 
     Mocked = MockFunction()
     @patch('iib_metrics_client.logger.info', side_effect=Mocked.mock_logging_info)
@@ -53,7 +54,6 @@ class TestGetIIBMetrics(unittest.TestCase):
             mock_put_metric_to_gateway):
         """Tests for `get_iib_metrics` function."""
         with patch('iib_metrics_client.get_brokers_status') as mock_get_brokers_status:
-            bip_codes_components = get_platform_params_for_commands(iib_ver='9')[2]
             mock_get_brokers_status.return_value = [['TEST', 'running', 'TEST']]
             self.assertEqual(
                 get_iib_metrics(
@@ -61,7 +61,7 @@ class TestGetIIBMetrics(unittest.TestCase):
                     pushgateway_port=self.pushgateway_port,
                     mqsilist_command=self.mqsilist_command,
                     bip_codes_brokers=self.bip_codes_brokers,
-                    bip_codes_components= bip_codes_components),
+                    bip_codes_components= self.bip_codes_components),
                 None)
             mock_get_brokers_status.return_value = [['TEST', 'stopped', 'TEST']]
             self.assertEqual(
@@ -70,7 +70,7 @@ class TestGetIIBMetrics(unittest.TestCase):
                     pushgateway_port=self.pushgateway_port,
                     mqsilist_command=self.mqsilist_command,
                     bip_codes_brokers=self.bip_codes_brokers,
-                    bip_codes_components= bip_codes_components),
+                    bip_codes_components= self.bip_codes_components),
                 None)
 
     @patch('iib_metrics_client.logger.info', side_effect=Mocked.mock_logging_info)
@@ -85,7 +85,8 @@ class TestGetIIBMetrics(unittest.TestCase):
                 pushgateway_host=self.pushgateway_host,
                 pushgateway_port=self.pushgateway_port,
                 mqsilist_command=self.mqsilist_command,
-                bip_codes_brokers=self.bip_codes_brokers)
+                bip_codes_brokers=self.bip_codes_brokers,
+                bip_codes_components= self.bip_codes_components)
             mock_iib_command.side_effect = Exception()
             self.assertRaises(
                 Exception,
@@ -93,7 +94,8 @@ class TestGetIIBMetrics(unittest.TestCase):
                 pushgateway_host=self.pushgateway_host,
                 pushgateway_port=self.pushgateway_port,
                 mqsilist_command=self.mqsilist_command,
-                bip_codes_brokers=self.bip_codes_brokers)
+                bip_codes_brokers=self.bip_codes_brokers,
+                bip_codes_components= self.bip_codes_components)
 
 
 class TestPutMetricToGateway(unittest.TestCase):
