@@ -7,14 +7,65 @@ from modules.iib_brokers import (
     format_broker,
     get_metric_name,
     get_metric_annotation)
+from modules.iib_api import get_platform_params_for_commands
 
 
 class TestGetBrokersStatus(unittest.TestCase):
     def test_get_brokers_status(self):
         """Test for `get_brokers_status` function."""
-        input_data = "BIP1284I: Broker 'TEST' on queue manager 'TEST' is running.\n"
-        check_data = [['TEST', 'running', 'TEST']]
-        self.assertEqual(check_data, get_brokers_status(brokers_data=input_data))
+        input_data = """\
+BIP1284I: Broker 'TEST' on queue manager 'QM1' is running.
+BIP1285I: Broker 'TEST' on queue manager 'QM1' is stopped.
+BIP1293I: Broker 'TEST' is a multi-instance broker running in standby mode on queue manager 'QM1'.
+BIP1294I: Broker 'TEST' is a multi-instance broker running in standby mode on queue manager 'QM1'.\nMore information will be available when the broker instance is active.
+BIP1295I: Broker 'TEST' is an active multi-instance or High Availability broker that is running on queue manager 'QM1'.
+BIP1296I: Broker 'TEST' is stopped. It is a multi-instance broker and will be started as a WebSphere MQ service by queue manager 'QM1'.
+BIP1297I: Broker 'TEST' is a multi-instance broker running in standby mode on queue manager 'QM1'.
+BIP1298I: Broker 'TEST' is stopped. It will be started as a WebSphere MQ service by queue manager 'QM1'.
+"""
+        check_data = [
+            ['TEST', 'running', 'QM1'],
+            ['TEST', 'stopped', 'QM1'],
+            ['TEST', 'running', 'QM1'],
+            ['TEST', 'running', 'QM1'],
+            ['TEST', 'running', 'QM1'],
+            ['TEST', 'stopped', 'QM1'],
+            ['TEST', 'running', 'QM1'],
+            ['TEST', 'stopped', 'QM1']]
+        bip_codes_brokers = get_platform_params_for_commands (iib_ver='9')[1]
+        self.assertEqual(check_data, get_brokers_status(brokers_data=input_data, bip_codes=bip_codes_brokers))
+
+    def test_get_integration_nodes_status(self):
+        """Test for `get_brokers_status` function for Integration Bus v10."""
+        input_data = """\
+BIP1284I: Integration node 'TEST' with default queue manager 'QM1 and administration URI 'http://testhost:4415' is running.
+BIP1285I: Integration node 'TEST' on queue manager 'QM1' is stopped.
+BIP1295I: Integration node 'TEST' is an active multi-instance or High Availability integration node that is running on queue manager 'QM1'.
+BIP1296I: Integration node 'TEST' is stopped. It is a multi-instance integration node and will be started as a WebSphere MQ service by queue manager 'QM1'.
+BIP1298I: Integration node 'TEST' is stopped. It will be started as a WebSphere MQ service by queue manager 'QM1'.
+BIP1325I: Integration node 'TEST' with administration URI 'http://testhost:4415' is running.
+BIP1326I: Integration node 'TEST' is stopped.
+BIP1340I: Integration node 'TEST' is running.
+BIP1353I: Integration node 'TEST' with default queue manager 'QM1' is running.
+BIP1366I: Integration node 'TEST' is an active multi-instance or High Availability integration node that is running on queue manager 'QM1'. The administration URI is 'http://testhost:4415'
+BIP1376I: Integration node 'TEST' is an active multi-instance or High Availability integration node that is running on queue manager 'QM1'. The administration URI is 'http://testhost:4415'
+BIP1377I: Integration node 'TEST' is stopped. It is a multi-instance integration node and will be started as a WebSphere MQ service by queue manager 'QM1'. Web administration will be enabled when the node is active.\n\
+"""
+        check_data = [
+            ['TEST', 'running', 'QM1'],
+            ['TEST', 'stopped', 'QM1'],
+            ['TEST', 'running', 'QM1'],
+            ['TEST', 'stopped', 'QM1'],
+            ['TEST', 'stopped', 'QM1'],
+            ['TEST', 'running', ''],
+            ['TEST', 'stopped', ''],
+            ['TEST', 'running', ''],
+            ['TEST', 'running', 'QM1'],
+            ['TEST', 'running', 'QM1'],
+            ['TEST', 'running', 'QM1'],
+            ['TEST', 'stopped', 'QM1']]
+        bip_codes_integration_nodes = get_platform_params_for_commands (iib_ver='10')[1]
+        self.assertEqual(check_data, get_brokers_status(brokers_data=input_data, bip_codes=bip_codes_integration_nodes))
 
 
 class TestGetBrokerItems(unittest.TestCase):

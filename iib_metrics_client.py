@@ -17,7 +17,9 @@ from modules.iib_exec_groups import format_exec_groups
 from modules.iib_applications import format_applications
 from modules.iib_message_flows import format_message_flows
 from log.logger_client import set_logger
-from modules.iib_api import run_iib_command
+from modules.iib_api import (
+    run_iib_command,
+    get_platform_params_for_commands)
 
 
 logger = set_logger()
@@ -53,7 +55,7 @@ def parse_commandline_args():
     parser.add_argument('--iibver', metavar='iibVersion', nargs='?', default=None, dest='iib_cmd_ver', help='IIB version: 9 or 10')
     args = parser.parse_args()
     if (args.iib_cmd_ver is None) or ((args.iib_cmd_ver != '9') and (args.iib_cmd_ver != '10')):
-        logger.info("Trying to determine ntegration Bus version from environment variable MQSI_VERSION_V.")
+        logger.info("Trying to determine Integration Bus version from environment variable MQSI_VERSION_V.")
         iib_cmd_ver = get_version_from_env()
     else:
         iib_cmd_ver = args.iib_cmd_ver
@@ -77,12 +79,12 @@ def put_metric_to_gateway(metric_data, job, pushgateway_host, pushgateway_port):
         raise PrometheusBadResponse("{0} is not available!".format(dest_url))
 
 
-def get_iib_metrics(pushgateway_host, pushgateway_port, iib_ver):
+def get_iib_metrics(pushgateway_host, pushgateway_port, mqsilist_command, bip_codes_brokers):
     start_time = time.time()
     logger.info("Starting metrics collecting for Integration Bus!")
     try:
-        brokers_data = run_iib_command(task='get_brokers_status')
-        brokers = get_brokers_status(brokers_data=brokers_data)
+        brokers_data = run_iib_command(task=mqsilist_command)
+        brokers = get_brokers_status(brokers_data=brokers_data, bip_codes=bip_codes_brokers)
         for broker in brokers:
             broker_name, status, qm_name = broker
             broker_data = format_broker(
@@ -128,9 +130,11 @@ if __name__ == "__main__":
     logger.info("Run {0}".format(static_content()))
     pushgateway_host, pushgateway_port, iib_ver = parse_commandline_args()
     logger.info("Integration Bus version: {0}".format(iib_ver))
+    mqsilist_command, bip_codes_brokers = get_platform_params_for_commands (iib_ver=iib_ver)
     while True:
         get_iib_metrics(
             pushgateway_host=pushgateway_host,
             pushgateway_port=pushgateway_port,
-            iib_ver=iib_ver)
+            mqsilist_command=mqsilist_command,
+            bip_codes_brokers=bip_codes_brokers)
         time.sleep(60)

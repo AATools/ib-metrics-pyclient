@@ -38,7 +38,8 @@ class MockFunction():
 class TestGetIIBMetrics(unittest.TestCase):
     pushgateway_host = 'testhost'
     pushgateway_port = '9091'
-    iib_ver = '9'
+    mqsilist_command = str()
+    bip_codes_brokers = dict()
 
     Mocked = MockFunction()
     @patch('iib_metrics_client.logger.info', side_effect=Mocked.mock_logging_info)
@@ -56,14 +57,16 @@ class TestGetIIBMetrics(unittest.TestCase):
                 get_iib_metrics(
                     pushgateway_host=self.pushgateway_host,
                     pushgateway_port=self.pushgateway_port,
-                    iib_ver=self.iib_ver),
+                    mqsilist_command=self.mqsilist_command,
+                    bip_codes_brokers=self.bip_codes_brokers),
                 None)
             mock_get_brokers_status.return_value = [['TEST', 'stopped', 'TEST']]
             self.assertEqual(
                 get_iib_metrics(
                     pushgateway_host=self.pushgateway_host,
                     pushgateway_port=self.pushgateway_port,
-                    iib_ver=self.iib_ver),
+                    mqsilist_command=self.mqsilist_command,
+                    bip_codes_brokers=self.bip_codes_brokers),
                 None)
 
     @patch('iib_metrics_client.logger.info', side_effect=Mocked.mock_logging_info)
@@ -77,14 +80,16 @@ class TestGetIIBMetrics(unittest.TestCase):
                 get_iib_metrics,
                 pushgateway_host=self.pushgateway_host,
                 pushgateway_port=self.pushgateway_port,
-                iib_ver=self.iib_ver)
+                mqsilist_command=self.mqsilist_command,
+                bip_codes_brokers=self.bip_codes_brokers)
             mock_iib_command.side_effect = Exception()
             self.assertRaises(
                 Exception,
                 get_iib_metrics,
                 pushgateway_host=self.pushgateway_host,
                 pushgateway_port=self.pushgateway_port,
-                iib_ver=self.iib_ver)
+                mqsilist_command=self.mqsilist_command,
+                bip_codes_brokers=self.bip_codes_brokers)
 
 
 class TestPutMetricToGateway(unittest.TestCase):
