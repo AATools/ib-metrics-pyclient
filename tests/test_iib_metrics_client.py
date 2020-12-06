@@ -31,7 +31,7 @@ class MockFunction():
         return 'OK'
 
     @staticmethod
-    def mock_put_metric_to_gateway(metric_data, job):
+    def mock_put_metric_to_gateway(metric_data, job, pushgateway_host, pushgateway_port):
         """Mock for `put_metric_to_gateway` function."""
         pass
 
@@ -46,7 +46,7 @@ class TestGetIIBMetrics(unittest.TestCase):
     Mocked = MockFunction()
     @patch('iib_metrics_client.logger.info', side_effect=Mocked.mock_logging_info)
     @patch('iib_metrics_client.run_iib_command', side_effect=Mocked.mock_run_iib_command)
-    @patch('iib_metrics_client.put_metric_to_gateway', side_efgect=Mocked.mock_put_metric_to_gateway)
+    @patch('iib_metrics_client.put_metric_to_gateway', side_effect=Mocked.mock_put_metric_to_gateway)
     def test_get_iib_metrics(
             self,
             mock_logging_info,
