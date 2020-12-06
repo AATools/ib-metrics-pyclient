@@ -198,7 +198,7 @@ class TestParseCommandlineArgs(unittest.TestCase):
             pushgateway_port= pushgateway_port,
             iib_cmd_ver='42'))
     def test_parse_commandline_args_is_42(self, mock_logging_info, mock_args):
-        """Test for `parse_commandline_args` function for `iib_cmd_ver` is None."""
+        """Test for `parse_commandline_args` function for `iib_cmd_ver` is not valid."""
         self.assertEqual(
             parse_commandline_args(),
             (self.pushgateway_host, self.pushgateway_port, self.iib_ver))
