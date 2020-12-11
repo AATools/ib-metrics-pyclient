@@ -4,3 +4,4 @@ urllib3
 pytest
 pytest-cov
 coveralls
+argparse
