@@ -1,13 +1,13 @@
 # IBM IB metrics exporter
 
-[![Build Status](https://travis-ci.com/AATools/ib-metrics-pyclient.svg?branch=master)](https://travis-ci.com/AATools/ib-metrics-pyclient) [![Coverage Status](https://coveralls.io/repos/github/AATools/ib-metrics-pyclient/badge.svg?branch=master)](https://coveralls.io/github/AATools/ib-metrics-pyclient?branch=master)
+[![Actions Status](https://github.com/AATools/ib-metrics-pyclient/workflows/GitHub%20CI/badge.svg)](https://github.com/AATools/ib-metrics-pyclient/actions) [![Coverage Status](https://coveralls.io/repos/github/AATools/ib-metrics-pyclient/badge.svg?branch=master)](https://coveralls.io/github/AATools/ib-metrics-pyclient?branch=master)
 
 This is python client for collecting IBM Integration Bus metrics and exporting to [Prometheus pushgateway](https://github.com/prometheus/pushgateway).
 The collected metrics can be explored in Prometheus or Grafana.
 
 The metrics are collected using [mqsilist](https://www.ibm.com/support/knowledgecenter/en/SSMKHH_9.0.0/com.ibm.etools.mft.doc/an07250_.htm) command. So, you need to install `IBM Integration Bus`.
 
-Tested for IBM IB v9 and v10 and Python 2.7, 3.6 on Linux.
+Tested for IBM IB v9 and v10 and Python 3.6, 3.7 on Linux.
 
 ## Collected metrics
 
