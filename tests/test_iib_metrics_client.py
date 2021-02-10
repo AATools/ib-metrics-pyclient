@@ -4,10 +4,7 @@ import os
 import sys
 import unittest
 import argparse
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
+from unittest.mock import patch
 from iib_metrics_client import (
     get_iib_metrics,
     put_metric_to_gateway,
