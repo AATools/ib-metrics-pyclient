@@ -20,7 +20,6 @@ The metrics provided by the client:
 * `ib_application_status...` - current status of IB application;
 * `ib_message_flow_status...` -  current status of IB message flow.
 
-
 See [detailed description of the metrics](#metrics-detailed-description) for an in-depth understanding.
 
 You can run `IB metrics pyclient` and [MQ metrics pyclient](https://github.com/AATools/mq-metrics-pyclient) together. Metrics from both clients will be sent to the same pushgateway. Conflicts will not arise.
@@ -48,12 +47,12 @@ nohup python3 iib_metrics_client.py &
 
 After that, you should set up your Prometheus server to collect metrics from Pushgateway (`http://<hostname>:9091/metrics`).
 
-You can specify `host` and `port` for pushgateway and Integration Bus version via command-line arguments.
+You can specify `host` and `port` for pushgateway, Integration Bus version and time interval in seconds between collecting metrics via command-line arguments.
 
 ```bash
 python3 iib_metrics_client.py -h
 
-usage: iib_metrics_client.py [-h] [--pghost [pushgatewayHost]] [--pgport [pushgatewayPort]] [--iibver [iibVersion]]
+usage: iib_metrics_client.py [-h] [--pghost [pushgatewayHost]] [--pgport [pushgatewayPort]] [--iibver [iibVersion]] [--collectint [collectInterval]]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -63,6 +62,8 @@ optional arguments:
                         pushgateway port
   --iibver [iibVersion]
                         IIB version: 9 or 10
+  --collectint [collectInterval]
+                        time interval between collecting metrics
 ```
 
 If argument is not set the default value is used.
@@ -72,6 +73,7 @@ If argument is not set the default value is used.
 | `pghost` | Pushgateway host | Hostname on which client is started.<br> Value define via `platform.node()`. |
 | `pgport` | Pushgateway port | `9091` |
 | `iibver` | IIB version | `9`<br> Valid value: **9** or **10**.<br> If argument is omitted or invalid value is passed, the client will try to determine version via environment variable `MQSI_VERSION_V`. If it can't determine the version using the environment variable, the default value will be used. |
+| `collectint` | Time interval between collecting metrics | `60` <br> Time in seconds. |
 
 ## Grafana dashboard
 
