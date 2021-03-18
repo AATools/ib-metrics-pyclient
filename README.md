@@ -5,7 +5,7 @@
 This is python client for collecting IBM Integration Bus metrics and exporting to [Prometheus pushgateway](https://github.com/prometheus/pushgateway).
 The collected metrics can be explored in Prometheus or Grafana.
 
-The metrics are collected using [mqsilist](https://www.ibm.com/support/knowledgecenter/en/SSMKHH_9.0.0/com.ibm.etools.mft.doc/an07250_.htm) command. So, you need to install `IBM Integration Bus`.
+The metrics are collected by using [mqsilist](https://www.ibm.com/support/knowledgecenter/en/SSMKHH_9.0.0/com.ibm.etools.mft.doc/an07250_.htm) command. The metrics are collected for **all local** Brokers. You need to run `IB metrics pyclient` in the same host where `IBM Integration Bus` was installed.
 
 Tested for IBM IB v9 and v10 and Python 3.6, 3.7 on Linux.
 
