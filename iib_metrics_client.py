@@ -32,7 +32,7 @@ class PrometheusBadResponse(Exception):
 def static_content():
     """Client name and version."""
     name = "ib-metrics-pyclient"
-    version = "0.3"
+    version = "0.4"
     return '{0} v.{1}'.format(name, version)
 
 
@@ -53,7 +53,7 @@ def parse_commandline_args():
     parser.add_argument('--pghost', metavar='pushgatewayHost', nargs='?', default=platform.node(), dest='pushgateway_host', help='pushgateway host')
     parser.add_argument('--pgport', metavar='pushgatewayPort', nargs='?', default='9091', dest='pushgateway_port', help='pushgateway port')
     parser.add_argument('--iibver', metavar='iibVersion', nargs='?', default=None, dest='iib_cmd_ver', help='IIB version: 9 or 10')
-    parser.add_argument('--collectint', metavar='collectInterval', nargs='?', default=60, type=int, dest='sleep_interval', help='time interval between collecting metrics ')
+    parser.add_argument('--collectint', metavar='collectInterval', nargs='?', default=60, type=int, dest='sleep_interval', help='time interval between collecting metrics')
     args = parser.parse_args()
     if (args.iib_cmd_ver is None) or ((args.iib_cmd_ver != '9') and (args.iib_cmd_ver != '10')):
         logger.info("Trying to determine Integration Bus version from environment variable MQSI_VERSION_V.")
