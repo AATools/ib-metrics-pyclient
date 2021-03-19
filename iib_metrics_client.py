@@ -32,7 +32,7 @@ class PrometheusBadResponse(Exception):
 def static_content():
     """Client name and version."""
     name = "ib-metrics-pyclient"
-    version = "0.3"
+    version = "0.4"
     return '{0} v.{1}'.format(name, version)
 
 
@@ -53,13 +53,14 @@ def parse_commandline_args():
     parser.add_argument('--pghost', metavar='pushgatewayHost', nargs='?', default=platform.node(), dest='pushgateway_host', help='pushgateway host')
     parser.add_argument('--pgport', metavar='pushgatewayPort', nargs='?', default='9091', dest='pushgateway_port', help='pushgateway port')
     parser.add_argument('--iibver', metavar='iibVersion', nargs='?', default=None, dest='iib_cmd_ver', help='IIB version: 9 or 10')
+    parser.add_argument('--collectint', metavar='collectInterval', nargs='?', default=60, type=int, dest='sleep_interval', help='time interval between collecting metrics')
     args = parser.parse_args()
     if (args.iib_cmd_ver is None) or ((args.iib_cmd_ver != '9') and (args.iib_cmd_ver != '10')):
         logger.info("Trying to determine Integration Bus version from environment variable MQSI_VERSION_V.")
         iib_cmd_ver = get_version_from_env()
     else:
         iib_cmd_ver = args.iib_cmd_ver
-    return args.pushgateway_host, args.pushgateway_port, iib_cmd_ver
+    return args.pushgateway_host, args.pushgateway_port, iib_cmd_ver, abs(args.sleep_interval)
 
 
 def put_metric_to_gateway(metric_data, job, pushgateway_host, pushgateway_port):
@@ -138,8 +139,9 @@ def get_iib_metrics(pushgateway_host, pushgateway_port, mqsilist_command, bip_co
 
 if __name__ == "__main__":
     logger.info("Run {0}".format(static_content()))
-    pushgateway_host, pushgateway_port, iib_ver = parse_commandline_args()
+    pushgateway_host, pushgateway_port, iib_ver, sleep_interval = parse_commandline_args()
     logger.info("Integration Bus version: {0}".format(iib_ver))
+    logger.info("Metrics will be collected every {0} seconds".format(sleep_interval))
     mqsilist_command, bip_codes_brokers, bip_codes_components = get_platform_params_for_commands(iib_ver=iib_ver)
     while True:
         get_iib_metrics(
@@ -148,4 +150,4 @@ if __name__ == "__main__":
             mqsilist_command=mqsilist_command,
             bip_codes_brokers=bip_codes_brokers,
             bip_codes_components=bip_codes_components)
-        time.sleep(60)
+        time.sleep(sleep_interval)

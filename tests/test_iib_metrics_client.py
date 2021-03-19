@@ -159,6 +159,7 @@ class TestParseCommandlineArgs(unittest.TestCase):
     pushgateway_host = 'testhost'
     pushgateway_port = '9091'
     iib_ver = '9'
+    sleep_interval=60
 
     Mocked = MockFunction()
     @patch('iib_metrics_client.logger.info', side_effect=Mocked.mock_logging_info)
@@ -167,12 +168,13 @@ class TestParseCommandlineArgs(unittest.TestCase):
         return_value=argparse.Namespace(
             pushgateway_host= pushgateway_host,
             pushgateway_port= pushgateway_port,
-            iib_cmd_ver= iib_ver))
+            iib_cmd_ver= iib_ver,
+            sleep_interval= sleep_interval))
     def test_parse_commandline_args(self, mock_logging_info, mock_args):
         """Test for `parse_commandline_args` function."""
         self.assertEqual(
             parse_commandline_args(), 
-            (self.pushgateway_host, self.pushgateway_port, self.iib_ver))
+            (self.pushgateway_host, self.pushgateway_port, self.iib_ver, self.sleep_interval))
 
     @patch('iib_metrics_client.logger.info', side_effect=Mocked.mock_logging_info)
     @patch(
@@ -180,12 +182,13 @@ class TestParseCommandlineArgs(unittest.TestCase):
         return_value=argparse.Namespace(
             pushgateway_host= pushgateway_host,
             pushgateway_port= pushgateway_port,
-            iib_cmd_ver=None))
+            iib_cmd_ver= None,
+            sleep_interval= sleep_interval))
     def test_parse_commandline_args_is_none(self, mock_logging_info, mock_args):
         """Test for `parse_commandline_args` function for `iib_cmd_ver` is None."""
         self.assertEqual(
             parse_commandline_args(),
-            (self.pushgateway_host, self.pushgateway_port, self.iib_ver))
+            (self.pushgateway_host, self.pushgateway_port, self.iib_ver, self.sleep_interval))
 
     @patch('iib_metrics_client.logger.info', side_effect=Mocked.mock_logging_info)
     @patch(
@@ -193,12 +196,27 @@ class TestParseCommandlineArgs(unittest.TestCase):
         return_value=argparse.Namespace(
             pushgateway_host= pushgateway_host,
             pushgateway_port= pushgateway_port,
-            iib_cmd_ver='42'))
+            iib_cmd_ver= '42',
+            sleep_interval= sleep_interval))
     def test_parse_commandline_args_is_42(self, mock_logging_info, mock_args):
         """Test for `parse_commandline_args` function for `iib_cmd_ver` is not valid."""
         self.assertEqual(
             parse_commandline_args(),
-            (self.pushgateway_host, self.pushgateway_port, self.iib_ver))
+            (self.pushgateway_host, self.pushgateway_port, self.iib_ver, self.sleep_interval))
+
+    @patch('iib_metrics_client.logger.info', side_effect=Mocked.mock_logging_info)
+    @patch(
+        'argparse.ArgumentParser.parse_args', 
+        return_value=argparse.Namespace(
+            pushgateway_host= pushgateway_host,
+            pushgateway_port= pushgateway_port,
+            iib_cmd_ver= iib_ver,
+            sleep_interval= -60))
+    def test_parse_commandline_args_is_negative_60(self, mock_logging_info, mock_args):
+        """Test for `parse_commandline_args` function for `sleep_interval` is `-60`."""
+        self.assertEqual(
+            parse_commandline_args(),
+            (self.pushgateway_host, self.pushgateway_port, self.iib_ver, self.sleep_interval))
 
 
 
